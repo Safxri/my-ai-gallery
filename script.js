@@ -1,4 +1,4 @@
-const CLOUD_NAME = "mediaflows_3e76c11d-8d62-4257-a219-93239b1b11f2";
+const CLOUD_NAME = "dzarhswab";
 const GALLERY_TAG = "school_gallery";
 let allPhotoDescriptors = []; // เก็บค่าใบหน้าของทุกรูปในคลัง
 
