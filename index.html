@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คลังภาพ AI - จุฬาภรณราชวิทยาลัย นครศรีธรรมราช</title>
+    <title>คลังภาพกิจกรรม AI - จุฬาภรณราชวิทยาลัย นครศรีธรรมราช</title>
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
         </div>
         <nav>
             <div class="logo-area">
-                <img src="assets/logo-school.png" alt="" id="school-logo">
+                <img src="assets/logo-school.png" alt="Logo" id="school-logo" onerror="this.style.display='none'">
                 <div class="logo-text">
                     <h1>โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย นครศรีธรรมราช</h1>
                     <p>Princess Chulabhorn Science High School Nakhon Si Thammarat</p>
@@ -24,7 +24,6 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#" onclick="location.reload()">หน้าแรก</a></li>
-                <li><a href="#" id="admin-btn">จัดการรูปภาพ</a></li>
                 <li><button class="search-nav-btn" onclick="document.getElementById('face-input').click()">🔍 ค้นหาหน้าตัวเอง</button></li>
             </ul>
         </nav>
@@ -33,26 +32,26 @@
     <section class="hero">
         <div class="hero-content">
             <h2>ระบบค้นหาภาพอัจฉริยะ (AI Face Search)</h2>
-            <p>อัปโหลดภาพใบหน้าของคุณเพื่อค้นหาภาพที่มีคุณอยู่ในกิจกรรมต่างๆ ของโรงเรียน</p>
+            <p>นวัตกรรมเพื่อการสืบค้นภาพกิจกรรมภายในโรงเรียนด้วยระบบจดจำใบหน้า</p>
             <input type="file" id="face-input" hidden accept="image/*">
+            <div id="status-area" class="status-box">กำลังเตรียมความพร้อมระบบ AI...</div>
         </div>
     </section>
 
     <main class="container">
-        <div id="status-area"></div>
-        
-        <div id="admin-panel" class="hidden">
-            <div class="upload-card">
-                <h3>อัปโหลดรูปภาพใหม่เข้าคลัง</h3>
-                <input type="file" id="upload-input" multiple>
-                <button onclick="handleUpload()">เริ่มอัปโหลด</button>
-            </div>
+        <div class="section-header">
+            <h2 class="title">คลังภาพกิจกรรมทั้งหมด</h2>
+            <p>รูปภาพจะถูกดึงมาจากระบบ Cloudinary โดยตรง</p>
         </div>
-
-        <h2 class="title">คลังภาพกิจกรรม</h2>
+        
         <div class="gallery" id="photo-gallery">
-            </div>
+            <div class="loader">กำลังโหลดรูปภาพจากคลัง...</div>
+        </div>
     </main>
+
+    <footer>
+        <p>&copy; 2024 Princess Chulabhorn Science High School Nakhon Si Thammarat. All Rights Reserved.</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
