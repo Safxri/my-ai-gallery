@@ -1,60 +1,71 @@
 const CLOUD_NAME = "dzarhswab";
 const GALLERY_TAG = "school_gallery";
-let allPhotoDescriptors = []; // เก็บค่าใบหน้าของทุกรูปในคลัง
+let allPhotoDescriptors = []; 
 
-// 1. โหลดโมเดล AI และเริ่มดึงรูป
+// 1. โหลดโมเดล AI
 async function initAI() {
     console.log("กำลังโหลด AI...");
+    const statusArea = document.getElementById('status-area');
     const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
     
-    await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
-    ]);
-
-    console.log("AI Ready!");
-    fetchImages();
+    try {
+        await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+            faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+        ]);
+        console.log("AI Ready!");
+        if(statusArea) statusArea.innerHTML = "ระบบ AI พร้อมใช้งาน";
+        fetchImages();
+    } catch (e) {
+        console.error("AI Load Error:", e);
+        if(statusArea) statusArea.innerHTML = "โหลด AI ไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ";
+    }
 }
 
-// 2. ดึงรูปจาก Cloudinary และให้ AI แอบสแกนหน้าเก็บไว้ล่วงหน้า
+// 2. ดึงรูปจาก Cloudinary
 async function fetchImages() {
     const gallery = document.getElementById('photo-gallery');
     try {
+        // ดึงรายชื่อรูปภาพที่มี Tag "school_gallery"
         const response = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${GALLERY_TAG}.json`);
         const data = await response.json();
         
-        gallery.innerHTML = ""; // ล้างหน้าเว็บก่อนโหลด
-        
-        allPhotoDescriptors = []; // ล้างค่าเก่า
+        gallery.innerHTML = ""; 
+        allPhotoDescriptors = []; 
 
         for (let imgInfo of data.resources) {
             const imgUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${imgInfo.public_id}.${imgInfo.format}`;
             
-            // สร้าง Element รูปภาพโชว์บนเว็บ
+            // แสดงรูปในแกลเลอรี
             const imgElement = document.createElement('img');
             imgElement.src = imgUrl;
             imgElement.className = "gallery-item";
             gallery.appendChild(imgElement);
 
-            // ให้ AI แอบสแกนหน้าในรูปนี้เก็บไว้ (เพื่อใช้ค้นหาเร็วๆ)
+            // ส่งไปให้ AI แอบสแกนเก็บไว้ (Background process)
             preprocessImage(imgUrl);
         }
     } catch (e) {
-        gallery.innerHTML = "<p>ไม่พบรูปภาพในคลัง หรือยังไม่ได้เปิดสิทธิ์ Resource List</p>";
+        console.error("Fetch Error:", e);
+        gallery.innerHTML = "<p>ไม่พบรูปภาพในคลัง หรือยังไม่ได้เปิดสิทธิ์ Resource List ใน Cloudinary</p>";
     }
 }
 
-// ฟังก์ชันแอบสแกนหน้าในคลัง
+// ฟังก์ชันแอบสแกนหน้าในคลัง (แก้เรื่อง crossOrigin)
 async function preprocessImage(url) {
-    const img = await faceapi.fetchImage(url);
-    const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-    if (detection) {
-        allPhotoDescriptors.push({ url: url, descriptor: detection.descriptor });
+    try {
+        const img = await faceapi.fetchImage(url, { crossOrigin: 'anonymous' });
+        const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+        if (detection) {
+            allPhotoDescriptors.push({ url: url, descriptor: detection.descriptor });
+        }
+    } catch (e) {
+        console.warn("สแกนรูปไม่ผ่านหนึ่งรูป (อาจเป็นเพราะไฟล์เสียหรือไม่มีใบหน้า):", url);
     }
 }
 
-// 3. ระบบค้นหาใบหน้า (เมื่อผู้ใช้เลือกรูปตัวเอง)
+// 3. ระบบค้นหาใบหน้า
 document.getElementById('face-input').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -66,18 +77,17 @@ document.getElementById('face-input').addEventListener('change', async (e) => {
     const queryDetection = await faceapi.detectSingleFace(queryImg, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
 
     if (!queryDetection) {
-        statusArea.innerHTML = "<p style='color:red'>ไม่พบใบหน้าในรูปภาพของคุณ ลองเปลี่ยนรูปใหม่ครับ</p>";
+        statusArea.innerHTML = "<p style='color:red'>ไม่พบใบหน้าในรูปภาพของคุณ ลองใช้รูปอื่นที่เห็นหน้าชัดๆ ครับ</p>";
         return;
     }
 
-    // เปรียบเทียบกับรูปในคลัง
     const gallery = document.getElementById('photo-gallery');
-    gallery.innerHTML = ""; // ล้างหน้าจอเพื่อโชว์ผลลัพธ์
+    gallery.innerHTML = ""; 
     let matchCount = 0;
 
     allPhotoDescriptors.forEach(item => {
         const distance = faceapi.euclideanDistance(queryDetection.descriptor, item.descriptor);
-        if (distance < 0.6) { // ค่ามาตรฐาน: น้อยกว่า 0.6 คือคนเดียวกัน
+        if (distance < 0.6) { 
             const img = document.createElement('img');
             img.src = item.url;
             img.className = "gallery-item";
@@ -86,8 +96,8 @@ document.getElementById('face-input').addEventListener('change', async (e) => {
         }
     });
 
-    statusArea.innerHTML = `<p style='color:green'>ค้นหาเสร็จสิ้น! เจอรูปที่คล้ายคุณทั้งหมด ${matchCount} รูป</p> 
-                            <button onclick="fetchImages()" style="margin-top:10px">ดูรูปทั้งหมดใหม่</button>`;
+    statusArea.innerHTML = `<p style='color:green'>เจอรูปที่คล้ายคุณทั้งหมด ${matchCount} รูป</p> 
+                            <button onclick="fetchImages()" style="margin-top:10px; padding:5px 15px; cursor:pointer;">ดูรูปทั้งหมดใหม่</button>`;
 });
 
 initAI();
