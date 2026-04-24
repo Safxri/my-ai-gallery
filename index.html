@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คลังภาพ AI - จุฬาภรณราชวิทยาลัย นครศรีธรรมราช</title>
+    <title>คลังภาพกิจกรรม AI - จุฬาภรณราชวิทยาลัย นครศรีธรรมราช</title>
     
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    
     <link rel="stylesheet" href="style.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -33,16 +35,18 @@
     <section class="hero">
         <div class="hero-content">
             <h2>ระบบค้นหาภาพอัจฉริยะ (AI Face Search)</h2>
-            <p>อัปโหลดรูปหน้าชัดๆ เพื่อค้นหาภาพของคุณในคลังกิจกรรม</p>
+            <p>นวัตกรรมเพื่อการสืบค้นภาพกิจกรรมภายในโรงเรียนด้วยระบบจดจำใบหน้า</p>
+            
             <input type="file" id="face-input" hidden accept="image/*">
-            <div id="status-area" class="status-box">กำลังโหลดระบบ AI...</div>
+            
+            <div id="status-area" class="status-box">กำลังเตรียมความพร้อมระบบ AI...</div>
         </div>
     </section>
 
     <main class="container">
         <div class="section-header">
             <h2 class="title">คลังภาพกิจกรรมทั้งหมด</h2>
-            <p id="counter">กำลังโหลดรูปภาพ...</p>
+            <p id="counter">กำลังดึงข้อมูลรูปภาพจาก Cloudinary...</p>
         </div>
         
         <div class="gallery" id="photo-gallery">
@@ -50,7 +54,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Princess Chulabhorn Science High School Nakhon Si Thammarat.</p>
+        <p>&copy; 2026 Princess Chulabhorn Science High School Nakhon Si Thammarat. All Rights Reserved.</p>
     </footer>
 
     <script src="script.js"></script>
