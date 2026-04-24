@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Face Search Gallery</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f4f4f9; }
+        .container { padding: 20px; }
+        #preview { max-width: 300px; margin-top: 10px; display: none; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 20px; }
+        img { width: 100%; border-radius: 8px; }
+        .loading { color: blue; display: none; }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h1>ระบบค้นหาภาพด้วยใบหน้า</h1>
+        <p>อัปโหลดรูปต้นแบบเพื่อหาหน้าที่เหมือนกันในคลัง</p>
+        
+        <input type="file" id="imageUpload" accept="image/*">
+        <br>
+        <img id="preview" src="" alt="preview">
+        <p class="loading" id="status">กำลังประมวลผล AI...</p>
+
+        <hr>
+        <div class="gallery" id="resultGallery">
+            </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const status = document.getElementById('status');
+
+        // 1. โหลดโมเดล AI เมื่อเปิดเว็บ
+        Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
+            faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
+            faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
+        ]).then(() => console.log("AI Ready!"));
+
+        // 2. เมื่อมีการอัปโหลดรูปเพื่อค้นหา
+        imageUpload.addEventListener('change', async () => {
+            const file = imageUpload.files[0];
+            if (!file) return;
+
+            // แสดงรูปตัวอย่าง
+            const img = await faceapi.bufferToImage(file);
+            document.getElementById('preview').src = img.src;
+            document.getElementById('preview').style.display = 'inline-block';
+            
+            status.style.display = 'block';
+            status.innerText = "กำลังสแกนใบหน้า...";
+
+            // 3. เริ่มการตรวจจับใบหน้า (AI ทำงานตรงนี้)
+            const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+
+            if (detections.length > 0) {
+                status.innerText = `เจอใบหน้า ${detections.length} หน้า! กำลังค้นหาในคลัง...`;
+                // ตรงนี้ในอนาคตคุณสามารถส่งค่า Descriptor ไปเช็คใน Database Cloudinary ได้
+                alert("สแกนใบหน้าสำเร็จ! (ในขั้นนี้ระบบพร้อมนำไปเปรียบเทียบกับฐานข้อมูลแล้ว)");
+            } else {
+                status.innerText = "ไม่พบใบหน้าในรูปภาพ";
+            }
+        });
+    </script>
+</body>
+</html>
