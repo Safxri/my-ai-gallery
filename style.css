@@ -1,49 +1,24 @@
-/* การตั้งค่าพื้นฐาน */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Sarabun', sans-serif; }
-:root {
-    --navy: #003366;
-    --red: #e74c3c;
-    --gray: #7f8c8d;
-    --bg: #f8f9fa;
-}
+:root { --navy: #003366; --red: #e74c3c; --bg: #f8f9fa; }
 
-body { background-color: var(--bg); color: #333; line-height: 1.6; }
+body { background: var(--bg); color: #333; }
+.top-bar { background: #1a252f; color: white; padding: 8px 10%; text-align: right; font-size: 13px; }
 
-/* Header & Nav */
-.top-bar { background: #1a252f; color: white; padding: 10px 10%; font-size: 13px; text-align: right; }
-nav { background: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 10%; border-bottom: 5px solid var(--navy); sticky: top; }
-.logo-area { display: flex; align-items: center; gap: 15px; }
+nav { background: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 10%; border-bottom: 5px solid var(--navy); }
 #school-logo { height: 60px; }
-.logo-text h1 { font-size: 18px; color: var(--navy); margin-bottom: 2px; }
-.logo-text p { font-size: 12px; color: var(--gray); font-weight: 300; }
+.logo-text h1 { font-size: 18px; color: var(--navy); }
+.logo-text p { font-size: 12px; color: #666; }
 
-.nav-links { list-style: none; display: flex; gap: 20px; }
-.nav-links a { text-decoration: none; color: #333; font-weight: 600; font-size: 15px; transition: 0.3s; }
-.nav-links a:hover { color: var(--red); }
+.search-nav-btn { background: var(--red); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+.search-nav-btn:hover { background: #c0392b; transform: scale(1.05); }
 
-.search-nav-btn { background: var(--red); color: white; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3); transition: 0.3s; }
-.search-nav-btn:hover { transform: translateY(-2px); background: #c0392b; }
+.hero { height: 400px; background: linear-gradient(rgba(0,51,102,0.7), rgba(0,0,0,0.5)), url('https://res.cloudinary.com/dzarhswab/image/upload/v1/school_bg') center/cover; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
+.status-box { margin-top: 20px; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 30px; font-size: 14px; }
 
-/* Hero Section */
-.hero { height: 450px; background: linear-gradient(rgba(0,51,102,0.7), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070') center/cover; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 0 20px; }
-.hero-content h2 { font-size: 36px; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-.status-box { margin-top: 20px; background: rgba(255,255,255,0.2); padding: 10px 25px; border-radius: 50px; backdrop-filter: blur(5px); display: inline-block; font-size: 14px; }
+.container { width: 85%; margin: 40px auto; }
+.section-header { text-align: center; margin-bottom: 30px; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+.gallery img:hover { transform: translateY(-5px); }
 
-/* Gallery Section */
-.container { width: 85%; margin: 50px auto; min-height: 500px; }
-.section-header { text-align: center; margin-bottom: 40px; }
-.section-header p { color: var(--gray); }
-
-.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-.gallery img { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.4s; background: #eee; }
-.gallery img:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
-
-/* Footer */
-footer { background: #1a252f; color: #999; text-align: center; padding: 30px; font-size: 13px; margin-top: 80px; }
-
-/* Responsive */
-@media (max-width: 768px) {
-    nav { flex-direction: column; gap: 20px; text-align: center; }
-    .logo-area { flex-direction: column; }
-    .hero-content h2 { font-size: 28px; }
-}
+footer { background: #1a252f; color: white; text-align: center; padding: 30px; margin-top: 50px; }
